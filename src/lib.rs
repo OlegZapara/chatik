@@ -1,3 +1,5 @@
+use std::sync::{Arc, Mutex};
+
 use crate::util::env::parse_var;
 use axum::extract::FromRef;
 use log::info;
@@ -11,6 +13,7 @@ pub mod util;
 #[derive(Clone)]
 pub struct AppConfig {
     pub pool: PgPool,
+    pub active_connections: Arc<Mutex<u32>>,
 }
 
 impl FromRef<AppConfig> for PgPool {
@@ -21,7 +24,10 @@ impl FromRef<AppConfig> for PgPool {
 
 pub fn app_setup(pool: PgPool) -> AppConfig {
     info!("Starting app on {}", dotenvy::var("BIND_ADDR").unwrap());
-    AppConfig { pool }
+    AppConfig {
+        pool,
+        active_connections: Arc::new(Mutex::new(0)),
+    }
 }
 
 pub fn check_env_vars() -> bool {
