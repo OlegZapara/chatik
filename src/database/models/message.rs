@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
 
+use crate::util::encryption::{decrypt, encrypt};
+
 #[derive(Debug, Clone, Serialize, Deserialize, FromRow)]
 pub struct Message {
     pub id: Uuid,
@@ -39,7 +41,7 @@ impl Message {
     where
         E: sqlx::Executor<'a, Database = sqlx::Postgres>,
     {
-        let result = sqlx::query_as!(
+        let mut results = sqlx::query_as!(
             Message,
             "
             SELECT * FROM messages
@@ -47,8 +49,11 @@ impl Message {
         )
         .fetch_all(exec)
         .await?;
+        for result in &mut results {
+            result.message = decrypt(&result.message);
+        }
 
-        Ok(result)
+        Ok(results)
     }
 
     pub async fn get_by_id<'a, E>(
@@ -58,7 +63,7 @@ impl Message {
     where
         E: sqlx::Executor<'a, Database = sqlx::Postgres>,
     {
-        let result = sqlx::query_as!(
+        let mut result = sqlx::query_as!(
             Message,
             "
             SELECT * FROM messages WHERE id=$1
@@ -67,6 +72,7 @@ impl Message {
         )
         .fetch_one(exec)
         .await?;
+        result.message = decrypt(&result.message);
 
         Ok(result)
     }
@@ -93,7 +99,8 @@ impl CreateMessageDto {
     where
         E: sqlx::Executor<'a, Database = sqlx::Postgres>,
     {
-        let result = sqlx::query_as!(
+        let encrypted_message = encrypt(&self.message);
+        let mut result = sqlx::query_as!(
             Message,
             "
             INSERT INTO messages (origin_id, from_id, to_id, to_type, message)
@@ -104,10 +111,11 @@ impl CreateMessageDto {
             self.from_id,
             self.to_id,
             self.to_type,
-            self.message,
+            encrypted_message,
         )
         .fetch_one(exec)
         .await?;
+        result.message = decrypt(&result.message);
 
         Ok(result)
     }
@@ -118,7 +126,8 @@ impl UpdateMessageDto {
     where
         E: sqlx::Executor<'a, Database = sqlx::Postgres>,
     {
-        let result = sqlx::query_as!(
+        let encrypted_message = encrypt(&self.message);
+        let mut result = sqlx::query_as!(
             Message,
             "
             UPDATE messages
@@ -130,11 +139,12 @@ impl UpdateMessageDto {
             self.from_id,
             self.to_id,
             self.to_type,
-            self.message,
+            encrypted_message,
             self.id,
         )
         .fetch_one(exec)
         .await?;
+        result.message = decrypt(&result.message);
 
         Ok(result)
     }

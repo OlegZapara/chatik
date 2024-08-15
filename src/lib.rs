@@ -41,5 +41,6 @@ pub fn check_env_vars() -> bool {
     failed |= check_var::<String>("DATABASE_URL");
     failed |= check_var::<String>("DATABASE_MIN_CONNECTIONS");
     failed |= check_var::<String>("DATABASE_MAX_CONNECTIONS");
+    failed |= check_var::<String>("ENCRYPTION_KEY");
     failed
 }

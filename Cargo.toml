@@ -20,4 +20,7 @@ chrono = { version = "0.4.38", features = ["serde"] }
 bcrypt = "0.15.1"
 thiserror = "1.0.63"
 uuid = { version = "1.10.0", features = ["v4", "serde"] }
+rand = "0.8.5"
+aes-gcm = "0.10.3"
+hex = "0.4.3"
 

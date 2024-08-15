@@ -11,6 +11,7 @@ use tower_http::services::ServeDir;
 #[tokio::main]
 async fn main() {
     dotenvy::dotenv().ok();
+
     env_logger::Builder::from_env(Env::default().default_filter_or("info"))
         .init();
 
