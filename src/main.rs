@@ -20,11 +20,15 @@ async fn main() {
         .await
         .expect("An error occurred while running migrations.");
 
-    let pool = database::connect()
+    let pool = database::connect_postgres()
         .await
         .expect("Database connection failed");
 
-    let app_config = chatik::app_setup(pool.clone());
+    let redis_client = database::connect_redis()
+        .await
+        .expect("Redis connection failed");
+
+    let app_config = chatik::app_setup(pool, redis_client);
 
     info!("Starting Axum HTTP Server");
 

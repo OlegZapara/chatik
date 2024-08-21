@@ -3,10 +3,10 @@ mod messages;
 mod users;
 mod websocket;
 
-use crate::AppConfig;
+use crate::AppState;
 use axum::Router;
 
-pub fn routes() -> Router<AppConfig> {
+pub fn routes() -> Router<AppState> {
     Router::new()
         .nest("/users", users::routes())
         .nest("/chats", chats::routes())

@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            DELETE FROM users_chats\n            WHERE user_id = $1 AND chat_id = $2\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "2731097e0865ed2c18f48a0229a0f5f89544c567aaf672f6ff5cffac2fa58a22"
+}

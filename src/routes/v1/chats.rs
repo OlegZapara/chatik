@@ -1,13 +1,13 @@
 use crate::database::models::chat::{Chat, CreateChatDto, UpdateChatDto};
 use crate::database::models::user::User;
-use crate::AppConfig;
+use crate::AppState;
 use axum::extract::{Path, State};
 use axum::routing::{delete, get, post, put};
 use axum::{Json, Router};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-pub fn routes() -> Router<AppConfig> {
+pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/", get(list_chats))
         .route("/:id", get(get_chat_by_id))

@@ -1,14 +1,14 @@
 use crate::database::models::message::{
     CreateMessageDto, Message, UpdateMessageDto,
 };
-use crate::AppConfig;
+use crate::AppState;
 use axum::extract::{Path, State};
 use axum::routing::{delete, get, post, put};
 use axum::{Json, Router};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-pub fn routes() -> Router<AppConfig> {
+pub fn routes() -> Router<AppState> {
     Router::new()
         .route("/", get(list_messages))
         .route("/:id", get(get_message_by_id))

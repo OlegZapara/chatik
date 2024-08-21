@@ -4,7 +4,7 @@ use sqlx::postgres::{PgPool, PgPoolOptions};
 use sqlx::{Connection, PgConnection, Postgres};
 use std::time::Duration;
 
-pub async fn connect() -> Result<PgPool, sqlx::Error> {
+pub async fn connect_postgres() -> Result<PgPool, sqlx::Error> {
     info!("Initializing database connection");
     let database_url =
         dotenvy::var("DATABASE_URL").expect("`DATABASE_URL` not in .env");
@@ -27,6 +27,7 @@ pub async fn connect() -> Result<PgPool, sqlx::Error> {
 
     Ok(pool)
 }
+
 pub async fn check_for_migrations() -> Result<(), sqlx::Error> {
     let uri = dotenvy::var("DATABASE_URL").expect("`DATABASE_URL` not in .env");
     let uri = uri.as_str();
